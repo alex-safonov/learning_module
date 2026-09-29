@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Модуль обучения - Урок 1</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #eef0f3;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* --- Шапка --- */
+        .header {
+            background-color: #ffffff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 24px;
+            border-bottom: 1px solid #e0e0e0;
+            flex-shrink: 0;
+        }
+
+        .header-left { display: flex; align-items: center; gap: 12px; }
+
+        .logo-badge {
+            width: 32px; height: 32px;
+            background-color: #1a73b5;
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .logo-badge svg { width: 20px; height: 20px; fill: #ffffff; }
+
+        .header-title { font-size: 16px; font-weight: 600; color: #111; }
+
+        .header-right { display: flex; align-items: center; gap: 20px; }
+
+        .project-badge { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+
+        .badge-c4 {
+            background-color: #1a73b5; color: white;
+            font-size: 12px; font-weight: bold;
+            padding: 4px 6px; border-radius: 4px;
+        }
+
+        .project-text { font-size: 14px; color: #333; }
+
+        .icon-btn {
+            background: none; border: none; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            color: #555; transition: color 0.2s;
+        }
+
+        .icon-btn:hover { color: #1a73b5; }
+        .icon-btn svg { width: 20px; height: 20px; fill: currentColor; }
+
+        /* --- Каркас --- */
+        .layout { flex: 1; display: flex; min-height: 0; }
+
+        /* --- Сайдбар --- */
+        .sidebar {
+            width: 320px;
+            flex-shrink: 0;
+            background-color: #f8f9fa;
+            border-right: 1px solid #e0e0e0;
+            padding: 24px 16px;
+            overflow-y: auto;
+        }
+
+        .lesson-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #111;
+            margin-bottom: 28px;
+        }
+
+        .sidebar-block { margin-bottom: 32px; }
+
+        .sidebar-label {
+            font-size: 16px;
+            font-weight: 700;
+            color: #111;
+            margin-bottom: 8px;
+        }
+
+        .sidebar-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: #111;
+            line-height: 1.4;
+        }
+
+        .lesson-nav { list-style: none; margin-top: 8px; }
+
+        .lesson-nav li { margin-bottom: 10px; }
+
+        .lesson-nav a {
+            display: inline-block;
+            font-size: 16px;
+            font-weight: 600;
+            color: #444;
+            text-decoration: none;
+            padding: 3px 8px;
+            border-radius: 4px;
+            transition: background-color 0.15s;
+        }
+
+        .lesson-nav a:hover { background-color: #e8f0f7; }
+
+        .lesson-nav a.active {
+            font-weight: 800;
+            color: #000;
+        }
+
+        /* --- Кнопка "Перейти к тестированию" --- */
+        .test-btn {
+            display: block;
+            width: 80%;
+            background-color: #1a73b5;
+            color: #ffffff;
+            text-align: center;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 700;
+            padding: 14px 20px;
+            border-radius: 8px;
+            margin-top: 24px;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        .test-btn:hover {
+            background-color: #155d94;
+        }
+
+        .test-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* --- Контент --- */
+        .content {
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+            min-width: 0;
+        }
+
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 24px;
+        }
+
+        .content-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #111;
+        }
+
+        .home-btn {
+            width: 40px; height: 40px;
+            background-color: #ffffff;
+            border: none; border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            color: #333;
+            transition: color 0.2s, box-shadow 0.2s;
+        }
+
+        .home-btn:hover { color: #1a73b5; box-shadow: 0 2px 6px rgba(0,0,0,0.2); }
+
+        .home-btn svg {
+            width: 20px; height: 20px;
+            stroke: currentColor; fill: none;
+            stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+        }
+
+        /* --- Аккордеон понятий --- */
+        .concept { margin-bottom: 24px; }
+
+        .concept-header {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background-color: #fdfdfd;
+            border: 1px solid #e2e5e9;
+            border-radius: 8px;
+            padding: 14px 16px;
+            cursor: pointer;
+            text-align: left;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .concept-header:hover { border-color: #c8cdd3; }
+
+        .concept-header:focus-visible {
+            outline: none;
+            border-color: #1a73b5;
+        }
+
+        .concept-name {
+            flex: 1;
+            font-size: 15px;
+            color: #555;
+        }
+
+        /* Чекбокс-индикатор "изучено" (сам не кликабельный) */
+        .studied-check {
+            width: 22px; height: 22px;
+            border: 2px solid #c3c8ce;
+            border-radius: 4px;
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            cursor: default;
+            transition: border-color 0.2s;
+        }
+
+        .studied-check svg {
+            width: 16px; height: 16px;
+            stroke: #2e9e44;
+            stroke-width: 3;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .concept.studied .studied-check { border-color: #2e9e44; }
+        .concept.studied .studied-check svg { opacity: 1; }
+
+        .chevron {
+            width: 20px; height: 20px;
+            fill: #777;
+            flex-shrink: 0;
+            transition: transform 0.25s ease;
+        }
+
+        .concept.open .chevron { transform: rotate(180deg); }
+
+        /* Раскрывающаяся часть */
+        .concept-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.35s ease;
+        }
+
+        .concept-card {
+            background-color: #fbfcfd;
+            border-radius: 8px;
+            padding: 32px;
+            margin: 24px 0;
+        }
+
+        .card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .concept-title {
+            font-size: 24px;
+            font-weight: 800;
+            color: #111;
+        }
+
+        /* Кнопка "Изучено": контурная, пока не изучено */
+        .badge-studied {
+            border: 2px solid #2e9e44;
+            color: #2e9e44;
+            font-size: 18px;
+            font-weight: 700;
+            padding: 8px 28px;
+            border-radius: 8px;
+            background: transparent;
+            flex-shrink: 0;
+            cursor: pointer;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        .badge-studied:hover { background-color: #e8f5e9; }
+
+        /* После клика: залита зелёным, текст белый */
+        .concept.studied .badge-studied {
+            background-color: #2e9e44;
+            color: #ffffff;
+        }
+
+        .concept.studied .badge-studied:hover { background-color: #268a3b; }
+
+        .concept-text {
+            margin-top: 24px;
+            font-size: 15px;
+            line-height: 1.7;
+            color: #3f454b;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Шапка -->
+    <header class="header">
+        <div class="header-left">
+            <div class="logo-badge">
+                <svg viewBox="0 0 24 24"><path d="M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5S2.45 4.9 1 6v14.65c0 .25.25.5.5.5.1 0 .15-.05.25-.05C3.1 20.45 5.05 20 6.5 20c1.95 0 4.05.4 5.5 1.5 1.35-.85 3.8-1.5 5.5-1.5 1.65 0 3.35.3 4.75 1.05.1.05.15.05.25.05.25 0 .5-.25.5-.5V6c-.6-.45-1.25-.75-2-1zm0 13.5c-1.1-.35-2.3-.5-3.5-.5-1.7 0-4.15.65-5.5 1.5V8c1.35-.85 3.8-1.5 5.5-1.5 1.2 0 2.4.15 3.5.5v11.5z"/></svg>
+            </div>
+            <span class="header-title">Модуль обучения (пользовательский раздел)</span>
+        </div>
+
+        <div class="header-right">
+            <div class="project-badge">
+                <span class="badge-c4">C4</span>
+                <span class="project-text">Проекты</span>
+            </div>
+            <button class="icon-btn" aria-label="Переключить тему">
+                <svg viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/></svg>
+            </button>
+            <button class="icon-btn" aria-label="Помощь">
+                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg>
+            </button>
+            <button class="icon-btn" aria-label="Выйти">
+                <svg viewBox="0 0 24 24"><path d="M10.09 15.59L11.5 17l5-5-5-5-1.41 1.41L12.67 11H3v2h9.67l-2.58 2.59zM19 3H5c-1.11 0-2 .9-2 2v4h2V5h14v14H5v-4H3v4c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg>
+            </button>
+        </div>
+    </header>
+
+    <div class="layout">
+
+        <!-- Сайдбар -->
+        <aside class="sidebar">
+            <h1 class="lesson-title">Урок 1</h1>
+
+            <div class="sidebar-block">
+                <div class="sidebar-label">Текущий курс:</div>
+                <div class="sidebar-value">Курс 1 - обучение новому</div>
+            </div>
+
+            <div class="sidebar-block">
+                <div class="sidebar-label">Уроки курса:</div>
+                <ul class="lesson-nav">
+                    <li><a href="#" class="active">Урок 1</a></li>
+                    <li><a href="#">Урок 2</a></li>
+                    <li><a href="#">Урок 3</a></li>
+                    <li><a href="#">Урок 4</a></li>
+                </ul>
+                <a href="#" class="test-btn">Перейти к тестированию</a>
+            </div>
+        </aside>
+
+        <!-- Контент -->
+        <main class="content">
+            <div class="content-header">
+                <h2 class="content-title">Содержание урока:</h2>
+                <button class="home-btn" title="На главную" aria-label="На главную">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M3 10.5 12 3l9 7.5"/>
+                        <path d="M5 9.5V21h14V9.5"/>
+                        <path d="M9 21v-6h6v6"/>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Понятие 1 -->
+            <section class="concept">
+                <button class="concept-header" aria-expanded="false">
+                    <span class="concept-name">Отпуск</span>
+                    <span class="studied-check" title="Отметка об изучении">
+                        <svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
+                    </span>
+                    <svg class="chevron" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
+                </button>
+                <div class="concept-body">
+                    <div class="concept-card">
+                        <div class="card-top">
+                            <h3 class="concept-title">Отпуск</h3>
+                            <button class="badge-studied" type="button">Изучено</button>
+                        </div>
+                        <p class="concept-text">Отпуск — это предусмотренный трудовым законодательством период отдыха сотрудника, в течение которого за ним сохраняется место работы и, в установленных случаях, средний заработок. Порядок предоставления отпусков регулируется внутренними регламентами компании, Трудовым кодексом и утверждённым графиком отпусков на календарный год. Заявка на отпуск оформляется не позднее чем за две недели до предполагаемой даты начала отдыха и согласовывается с непосредственным руководителем.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Понятие 2 -->
+            <section class="concept">
+                <button class="concept-header" aria-expanded="false">
+                    <span class="concept-name">Премия</span>
+                    <span class="studied-check" title="Отметка об изучении">
+                        <svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
+                    </span>
+                    <svg class="chevron" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
+                </button>
+                <div class="concept-body">
+                    <div class="concept-card">
+                        <div class="card-top">
+                            <h3 class="concept-title">Премия</h3>
+                            <button class="badge-studied" type="button">Изучено</button>
+                        </div>
+                        <p class="concept-text">Премия — это денежное вознаграждение, выплачиваемое сотруднику сверх основного оклада за достижение установленных показателей эффективности, выполнение особых задач или выдающиеся результаты в работе. Система премирования направлена на мотивацию персонала и стимулирование высокой производительности труда. Размер и условия выплаты премии определяются локальными нормативными актами компании.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Понятие 3 -->
+            <section class="concept">
+                <button class="concept-header" aria-expanded="false">
+                    <span class="concept-name">Совещание</span>
+                    <span class="studied-check" title="Отметка об изучении">
+                        <svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
+                    </span>
+                    <svg class="chevron" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
+                </button>
+                <div class="concept-body">
+                    <div class="concept-card">
+                        <div class="card-top">
+                            <h3 class="concept-title">Совещание</h3>
+                            <button class="badge-studied" type="button">Изучено</button>
+                        </div>
+                        <p class="concept-text">Совещание — это организованная форма коллективного обсуждения рабочих вопросов, принятия управленческих решений и координации действий между подразделениями. Эффективное совещание требует предварительной подготовки повестки, регламента и ответственного модератора. Результаты совещания фиксируются в протоколе с указанием принятых решений и ответственных лиц.</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // --- Аккордеон (на старте всё свёрнуто) ---
+        document.querySelectorAll('.concept-header').forEach(header => {
+            header.addEventListener('click', () => {
+                const concept = header.closest('.concept');
+                concept.classList.toggle('open');
+
+                const body = concept.querySelector('.concept-body');
+                if (concept.classList.contains('open')) {
+                    body.style.maxHeight = body.scrollHeight + 'px';
+                } else {
+                    body.style.maxHeight = null;
+                }
+
+                header.setAttribute('aria-expanded', concept.classList.contains('open'));
+            });
+        });
+
+        // --- Кнопка "Изучено": проставляет/снимает чекбокс в шапке ---
+        document.querySelectorAll('.badge-studied').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const concept = btn.closest('.concept');
+                concept.classList.toggle('studied');
+
+                // пересчитываем высоту, если аккордеон открыт
+                if (concept.classList.contains('open')) {
+                    const body = concept.querySelector('.concept-body');
+                    body.style.maxHeight = body.scrollHeight + 'px';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
