@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Обучение - Пользовательский раздел</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+  body { background: #f4f5f7; color: #222; min-height: 100vh; display: flex; flex-direction: column; }
+
+  /* Шапка */
+  .topbar {
+    background: #fff;
+    border-bottom: 1px solid #e4e6ea;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .breadcrumbs { display: flex; align-items: center; gap: 8px; font-size: 14px; color: #555; }
+  .breadcrumbs .logo {
+    width: 28px; height: 28px; background: #1a73b5; border-radius: 6px;
+    display: flex; align-items: center; justify-content: center; margin-right: 6px;
+  }
+  .breadcrumbs .logo svg { width: 16px; height: 16px; fill: #fff; }
+  .breadcrumbs .sep { color: #bbb; }
+  .breadcrumbs .current { color: #111; font-weight: 500; }
+
+  .topbar-right { display: flex; align-items: center; gap: 18px; }
+  .project-badge { display: flex; align-items: center; gap: 6px; font-size: 14px; color: #333; }
+  .badge-c4 { background: #1a73b5; color: #fff; font-size: 11px; font-weight: 700; padding: 3px 6px; border-radius: 4px; }
+  .icon-btn { background: none; border: none; cursor: pointer; color: #555; display: flex; align-items: center; padding: 4px; }
+  .icon-btn:hover { color: #1a73b5; }
+  .icon-btn svg { width: 18px; height: 18px; fill: currentColor; }
+
+  /* Каркас */
+  .layout { display: flex; flex: 1; min-height: 0; }
+
+  /* Сайдбар */
+  .sidebar {
+    width: 260px;
+    background: #fff;
+    border-right: 1px solid #e4e6ea;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+  }
+  .sidebar-top { padding: 14px 16px; border-bottom: 1px solid #eef0f2; }
+  .back-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 13px; color: #555; text-decoration: none; margin-bottom: 12px;
+  }
+  .back-link:hover { color: #1a73b5; }
+  .back-link svg { width: 14px; height: 14px; fill: currentColor; }
+
+  .course-title { font-size: 16px; font-weight: 700; color: #111; }
+  .course-sub { font-size: 12px; color: #888; margin-top: 2px; }
+  .course-lessons-count { font-size: 12px; color: #888; margin-top: 4px; }
+
+  .lessons-list { flex: 1; padding: 8px; overflow-y: auto; }
+  .lesson-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 12px; border-radius: 6px; cursor: pointer;
+    font-size: 14px; color: #333; margin-bottom: 2px;
+  }
+  .lesson-item:hover { background: #f5f7fa; }
+  .lesson-item.active { background: #e4eff9; color: #1a73b5; }
+  .lesson-item .num { color: #888; margin-right: 6px; }
+  .lesson-item.active .num { color: #1a73b5; }
+  .lesson-item .lesson-text { flex: 1; }
+
+  /* Чекбокс прохождения */
+  .pass-check {
+    width: 20px; height: 20px;
+    border: 2px solid #c3c8ce;
+    border-radius: 4px;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    cursor: default;
+    transition: border-color 0.2s;
+  }
+  .pass-check svg {
+    width: 14px; height: 14px;
+    stroke: #2e9e44;
+    stroke-width: 3;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .pass-check.passed { border-color: #2e9e44; }
+  .pass-check.passed svg { opacity: 1; }
+
+  /* Кнопки действий в сайдбаре */
+  .sidebar-actions {
+    padding: 12px 16px;
+    border-top: 1px solid #eef0f2;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 24px;
+  }
+  .btn-sidebar {
+    width: 100%;
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+  }
+  .btn-check {
+    background: #1a73b5;
+    color: #fff;
+  }
+  .btn-check:hover:not(:disabled) { background: #155d94; }
+  .btn-check:disabled {
+    background: #a8c8e0;
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+  .btn-clear {
+    background: #fff;
+    color: #555;
+    border: 1px solid #e0e2e6;
+  }
+  .btn-clear:hover { background: #f5f7fa; border-color: #c8cdd3; }
+
+  /* Основная область */
+  .main { flex: 1; padding: 20px 28px; overflow-y: auto; }
+
+  .page-header {
+    background: #fff;
+    border: 1px solid #e4e6ea;
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+  }
+  .page-title { font-size: 18px; font-weight: 700; color: #111; }
+
+  .lesson-card {
+    background: #fff;
+    border: 1px solid #e4e6ea;
+    border-radius: 8px;
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+  .lesson-name { font-size: 24px; font-weight: 700; color: #111; margin-bottom: 24px; }
+
+  .section-title { font-size: 18px; font-weight: 700; color: #111; margin-bottom: 16px; }
+
+  .question-card {
+    border: 1px solid #e4e6ea;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .question-header { display: flex; gap: 12px; margin-bottom: 12px; }
+  .question-num { font-size: 16px; font-weight: 700; color: #333; flex-shrink: 0; }
+  .question-text { font-size: 15px; color: #111; line-height: 1.5; }
+  .question-type { font-size: 13px; color: #888; margin-bottom: 16px; padding-left: 28px; }
+
+  .answer-option {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 8px 0 8px 28px; font-size: 14px; color: #333; cursor: pointer;
+  }
+  .answer-option input { margin-top: 2px; accent-color: #1a73b5; cursor: pointer; }
+
+  /* Кнопка "Ответить" — теперь сразу под списком вопросов */
+  .submit-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+
+  .btn-submit {
+    background-color: #1a73b5;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 48px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+  }
+
+  .btn-submit:hover { background-color: #155d94; }
+  .btn-submit:active { transform: scale(0.98); }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="breadcrumbs">
+    <div class="logo">
+      <svg viewBox="0 0 24 24"><path d="M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5S2.45 4.9 1 6v14.65c0 .25.25.5.5.5.1 0 .15-.05.25-.05C3.1 20.45 5.05 20 6.5 20c1.95 0 4.05.4 5.5 1.5 1.35-.85 3.8-1.5 5.5-1.5 1.65 0 3.35.3 4.75 1.05.1.05.15.05.25.05.25 0 .5-.25.5-.5V6c-.6-.45-1.25-.75-2-1zm0 13.5c-1.1-.35-2.3-.5-3.5-.5-1.7 0-4.15.65-5.5 1.5V8c1.35-.85 3.8-1.5 5.5-1.5 1.2 0 2.4.15 3.5.5v11.5z"/></svg>
+    </div>
+    <span>Обучение</span>
+    <span class="sep">›</span>
+    <span class="current">Пользовательский раздел</span>
+  </div>
+  <div class="topbar-right">
+    <div class="project-badge">
+      <span class="badge-c4">C4</span>
+      <span>Проекты</span>
+    </div>
+    <button class="icon-btn" aria-label="Тема"><svg viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/></svg></button>
+    <button class="icon-btn" aria-label="Помощь"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg></button>
+    <button class="icon-btn" aria-label="Настройки"><svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg></button>
+  </div>
+</header>
+
+<div class="layout">
+
+  <aside class="sidebar">
+    <div class="sidebar-top">
+      <a href="#" class="back-link">
+        <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+        Все курсы
+      </a>
+      <div class="course-title">Онбординг</div>
+      <div class="course-sub">Материалы по регламентам</div>
+      <div class="course-lessons-count">1 урок</div>
+    </div>
+    <div class="lessons-list">
+      <div class="lesson-item">
+        <span class="lesson-text"><span class="num">1</span>Информационная безопасность</span>
+        <div class="pass-check passed" title="Пройдено">
+        <!-- <div class="pass-check passed" title="Пройдено"></div>   -->
+          <svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
+        </div>
+      </div>
+      <div class="lesson-item active">
+        <span class="lesson-text"><span class="num">2</span>Требования к документам</span>
+        <div class="pass-check passed" title="Не пройдено">
+          <svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
+        </div>
+      </div>
+      <div class="sidebar-actions">
+      <!-- <button class="btn-sidebar btn-check" id="checkAllBtn" type="button" disabled>Проверить все ответы</button> -->
+      <button class="btn-sidebar btn-check" id="checkAllBtn" type="button">Проверить все ответы</button>
+      <button class="btn-sidebar btn-clear" id="clearBtn" type="button">Очистить</button>
+    </div>
+    </div>
+    <!-- <div class="sidebar-actions">
+      <button class="btn-sidebar btn-check" id="checkAllBtn" type="button" disabled>Проверить все ответы</button>
+      <button class="btn-sidebar btn-clear" id="clearBtn" type="button">Очистить</button>
+    </div> -->
+  </aside>
+
+  <main class="main">
+
+    <div class="page-header">
+      <h1 class="page-title">Проверка знаний по уроку:</h1>
+    </div>
+
+    <div class="lesson-card">
+      <h2 class="lesson-name">Требования к документам</h2>
+
+      <h3 class="section-title">Вопросы</h3>
+
+      <!-- Вопрос 1 -->
+      <div class="question-card" data-question="q1">
+        <div class="question-header">
+          <div class="question-num">1</div>
+          <div class="question-text">Какие функции защиты, согласно тексту, должен обеспечивать цифровой продукт?</div>
+        </div>
+        <div class="question-type">Несколько правильных ответов</div>
+        <label class="answer-option"><input type="checkbox" name="q1"> Управление доступом, регистрацию и учет, обеспечение целостности и доступности</label>
+        <label class="answer-option"><input type="checkbox" name="q1"> Антивирусную проверку всех загружаемых и хранящихся файлов</label>
+        <label class="answer-option"><input type="checkbox" name="q1"> Автоматическое удаление всех архивных данных через 30 дней</label>
+        <label class="answer-option"><input type="checkbox" name="q1"> Мониторинг работы, фиксацию действий пользователей, формирование статистических и аналитических отчетов</label>
+      </div>
+
+      <!-- Вопрос 2 -->
+      <div class="question-card" data-question="q2">
+        <div class="question-header">
+          <div class="question-num">2</div>
+          <div class="question-text">При каком условии допускается использование продукта для обработки и хранения персональных данных?</div>
+        </div>
+        <div class="question-type">Один правильный ответ</div>
+        <label class="answer-option"><input type="radio" name="q2"> Только после оценки эффективности мер по обеспечению безопасности персональных данных</label>
+        <label class="answer-option"><input type="radio" name="q2"> Сразу после завершения разработки программного обеспечения</label>
+        <label class="answer-option"><input type="radio" name="q2"> Только после публикации статистических и аналитических отчетов</label>
+        <label class="answer-option"><input type="radio" name="q2"> После назначения пользователей системных ролей без дополнительных проверок</label>
+      </div>
+
+      <!-- Кнопка "Ответить" — сразу под вопросами -->
+      <div class="submit-wrapper">
+        <button class="btn-submit" type="button">Ответить</button>
+      </div>
+
+    </div>
+
+  </main>
+</div>
+
+<script>
+  const checkAllBtn = document.getElementById('checkAllBtn');
+  const clearBtn = document.getElementById('clearBtn');
+  const questions = document.querySelectorAll('.question-card');
+
+  // Проверяем, отвечены ли все вопросы
+  function updateCheckButton() {
+    let allAnswered = true;
+    questions.forEach(q => {
+      const name = q.dataset.question;
+      const checkboxes = q.querySelectorAll(`input[type="checkbox"][name="${name}"]`);
+      const radios = q.querySelectorAll(`input[type="radio"][name="${name}"]`);
+
+      if (checkboxes.length > 0) {
+        // Для checkbox — хотя бы один должен быть отмечен
+        const anyChecked = Array.from(checkboxes).some(cb => cb.checked);
+        if (!anyChecked) allAnswered = false;
+      } else if (radios.length > 0) {
+        // Для radio — один должен быть выбран
+        const anyChecked = Array.from(radios).some(r => r.checked);
+        if (!anyChecked) allAnswered = false;
+      }
+    });
+    checkAllBtn.disabled = !allAnswered;
+  }
+
+  // Слушаем изменения во всех input
+  document.querySelectorAll('.question-card input').forEach(input => {
+    input.addEventListener('change', updateCheckButton);
+  });
+
+  // Очистка всех ответов
+  clearBtn.addEventListener('click', () => {
+    document.querySelectorAll('.question-card input').forEach(input => {
+      input.checked = false;
+    });
+    updateCheckButton();
+  });
+
+  // Инициализация при загрузке
+  updateCheckButton();
+</script>
+
+</body>
+</html>
